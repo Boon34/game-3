@@ -12,6 +12,7 @@
             --text-color: #fff;
             --highlight: #54f357; 
             --btn-hover: #ff69b4;
+            --btn-back: #ffcc00; /* Màu riêng cho nút Back */
         }
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #333; font-family: var(--main-font); }
@@ -26,20 +27,20 @@
             background-repeat: no-repeat;
         }
 
-        /* --- CẤU HÌNH MÈO (SỬA LỖI TÀNG HÌNH) --- */
+        /* --- CẤU HÌNH MÈO (NÉT CĂNG - KHÔNG MỜ) --- */
         #hero-cat {
             position: absolute;
             bottom: 34%; 
             left: 5%;
-            width: 110px; /* Tăng to hơn xíu nữa cho rõ */
+            width: 110px; 
             height: auto;
             transition: left 2.5s linear;
             z-index: 10;
             
-            /* --- LỆNH QUAN TRỌNG ĐỂ SỬA LỖI MỜ --- */
-            mix-blend-mode: normal !important; /* Tắt chế độ hòa trộn */
-            opacity: 1 !important;             /* Ép độ đậm 100% */
-            filter: none !important;           /* Bỏ mọi bộ lọc làm mờ */
+            /* Tắt chế độ hòa trộn để không bị trong suốt */
+            mix-blend-mode: normal !important; 
+            opacity: 1 !important;             
+            filter: none !important;           
             
             /* Giữ độ nét Pixel */
             image-rendering: pixelated; 
@@ -50,14 +51,14 @@
         .walking { animation: bounce 0.4s infinite alternate; }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
 
-        /* --- HỘP THOẠI (NHỎ GỌN) --- */
+        /* --- HỘP THOẠI --- */
         #dialogue-box {
             position: absolute;
             bottom: 20px; 
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 400px; /* Giữ form nhỏ gọn như điện thoại */
+            max-width: 400px; 
             background: var(--box-bg);
             border: 1px solid rgba(255,255,255,0.3);
             padding: 15px 20px;
@@ -105,6 +106,17 @@
             background: var(--btn-hover);
             border-color: var(--btn-hover);
             padding-left: 15px;
+        }
+
+        /* Style riêng cho nút Quay lại */
+        .btn-back {
+            border-color: rgba(255, 204, 0, 0.5);
+            color: #ffeb3b;
+        }
+        .btn-back:hover {
+            background: var(--btn-back);
+            color: #000;
+            border-color: var(--btn-back);
         }
         
         .hidden { display: none !important; }
@@ -158,6 +170,8 @@
                     { text: "Đi thôi Boon ơi! 🐾", nextState: 'station1', move: POSITIONS.STATION_1 }
                 ]
             },
+            
+            // --- TRẠM 1: ĂN UỐNG ---
             station1: {
                 text: "TRẠM 1: NẠP NĂNG LƯỢNG 🍲\nBụng đang khó chịu, bạn muốn dùng gì?",
                 choices: [
@@ -166,40 +180,64 @@
                     { text: "Ăn vặt (Bim bim/Socola)", nextState: 'st1_snack_menu' }
                 ]
             },
+            // Chi tiết Nước ấm
             st1_water_info: {
                 text: "💧 LỢI ÍCH CỦA NƯỚC ẤM:\nGiúp giãn cơ tử cung, giảm đau bụng hiệu quả và tăng cường lưu thông máu giúp cơ thể dễ chịu hơn.",
-                choices: [{ text: "Tuyệt vời, chọn món này! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Nước ấm" }]
+                choices: [
+                    { text: "Tuyệt vời, chọn món này! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Nước ấm" },
+                    { text: "⬅️ Quay lại chọn khác", nextState: 'station1', isBack: true }
+                ]
             },
+            // Chi tiết Hoa quả
             st1_fruit_info: {
                 text: "🍎 LỢI ÍCH CỦA HOA QUẢ:\nCung cấp Vitamin, giảm mệt mỏi.\n\n✨ Gợi ý: Dưa hấu, Cam, Chuối, Ổi.",
-                choices: [{ text: "Ok, sẽ đi ăn hoa quả! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Hoa quả (Cam/Ổi/Chuối...)" }]
+                choices: [
+                    { text: "Ok, sẽ đi ăn hoa quả! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Hoa quả (Cam/Ổi/Chuối...)" },
+                    { text: "⬅️ Quay lại chọn khác", nextState: 'station1', isBack: true }
+                ]
             },
+            // Menu Ăn vặt
             st1_snack_menu: {
                 text: "Bạn thèm món ăn vặt nào?",
                 choices: [
                     { text: "Bim bim 🥔", nextState: 'st1_bimbim_menu' },
-                    { text: "Socola 🍫", nextState: 'st1_choco_info' }
+                    { text: "Socola 🍫", nextState: 'st1_choco_info' },
+                    { text: "⬅️ Quay lại", nextState: 'station1', isBack: true }
                 ]
             },
+            // Menu Bim bim
             st1_bimbim_menu: {
                 text: "Chọn loại Bim bim yêu thích nào:",
                 choices: [
                     { text: "Bim bim Lays (Khoai tây)", nextState: 'st1_lays_info' },
-                    { text: "Bim bim Cà chua", nextState: 'st1_tomato_info' }
+                    { text: "Bim bim Cà chua", nextState: 'st1_tomato_info' },
+                    { text: "⬅️ Quay lại", nextState: 'st1_snack_menu', isBack: true }
                 ]
             },
             st1_lays_info: {
                 text: "🥔 LAYS:\nNhững lát khoai tây vàng ươm, giòn rụm. Ăn vào là thấy vui vẻ, xả stress ngay lập tức!",
-                choices: [{ text: "Chốt đơn Lays! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Bim bim Lays" }]
+                choices: [
+                    { text: "Chốt đơn Lays! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Bim bim Lays" },
+                    { text: "⬅️ Đổi ý, chọn vị khác", nextState: 'st1_bimbim_menu', isBack: true }
+                ]
             },
             st1_tomato_info: {
                 text: "🍅 BIM BIM CÀ CHUA:\nVị chua ngọt tuổi thơ thần thánh, ăn cuốn không ngừng được!",
-                choices: [{ text: "Chốt đơn vị Cà chua! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Bim bim Cà chua" }]
+                choices: [
+                    { text: "Chốt đơn vị Cà chua! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Bim bim Cà chua" },
+                    { text: "⬅️ Đổi ý, chọn vị khác", nextState: 'st1_bimbim_menu', isBack: true }
+                ]
             },
             st1_choco_info: {
                 text: "🍫 LỢI ÍCH CỦA SOCOLA:\nSocola đen chứa Magie giúp giảm đau bụng kinh và kích thích 'hormone hạnh phúc'.",
-                choices: [{ text: "Chốt đơn Socola! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Socola" }]
+                choices: [
+                    { text: "Chốt đơn Socola! ►", nextState: 'station2', move: POSITIONS.STATION_2, save: "Socola" },
+                    { text: "⬅️ Quay lại", nextState: 'st1_snack_menu', isBack: true }
+                ]
             },
+
+
+            // --- TRẠM 2: CƠ THỂ ---
             station2: {
                 text: "TRẠM 2: SPA TẠI GIA 🛁\nĐi được nửa đường rồi. Bạn muốn chăm sóc cơ thể thế nào?",
                 choices: [
@@ -208,39 +246,60 @@
                 ]
             },
             st2_soak_steps: {
-                text: "🦶 CÁC BƯỚC NGÂM CHÂN:\n1. Nước ấm ~40 độ.\n2. Thêm gừng + muối.\n3. Ngâm 15-20p.\n4. Lau khô, đi tất ấm.",
-                choices: [{ text: "Đã nhớ, đi tiếp thôi! ►", nextState: 'station3', move: POSITIONS.STATION_3, save: "Ngâm chân nước ấm" }]
+                text: "🦶 CÁC BƯỚC NGÂM CHÂN:\n1. Nước ấm ~40 độ.\n2. Thêm gừng + muối(có hoặc không).\n3. Ngâm 15-20p.\n4. Lau khô, đi tất ấm.",
+                choices: [
+                    { text: "Đã nhớ, đi tiếp thôi! ►", nextState: 'station3', move: POSITIONS.STATION_3, save: "Ngâm chân nước ấm" },
+                    { text: "⬅️ Xem Skincare thử", nextState: 'station2', isBack: true }
+                ]
             },
             st2_skincare_steps: {
                 text: "✨ CÁC BƯỚC SKINCARE:\n1. Rửa mặt sạch.\n2. Toner cấp ẩm.\n3. Kem dưỡng mỏng nhẹ.\n(Tối giản để da thở nhé!)",
-                choices: [{ text: "Đã nhớ, đi tiếp thôi! ►", nextState: 'station3', move: POSITIONS.STATION_3, save: "Skincare tối giản" }]
+                choices: [
+                    { text: "Đã nhớ, đi tiếp thôi! ►", nextState: 'station3', move: POSITIONS.STATION_3, save: "Skincare tối giản" },
+                    { text: "⬅️ Xem Ngâm chân thử", nextState: 'station2', isBack: true }
+                ]
             },
+
+
+            // --- TRẠM 3: TINH THẦN ---
             station3: {
                 text: "TRẠM 3: CHILL TINH THẦN 🎵\nTrạm cuối rồi. Tối nay chốt đơn hoạt động gì đây?",
                 choices: [
-                    { text: "Xem phim cùng Lâm (Cơm chó)", nextState: 'st3_withLam' },
+                    { text: "Xem phim cùng Lâm (một người khỏe, hai người vui 🥰)", nextState: 'st3_withLam' },
                     { text: "Xem phim một mình (Me time)", nextState: 'st3_alone' },
                     { text: "Đọc truyện tranh & Ngủ sớm", nextState: 'finish', move: POSITIONS.END, save: "Đọc truyện tranh" }
                 ]
             },
             st3_withLam: {
-                text: "🎬 XEM PHIM CÙNG LÂM:\nNhắn ngay cho Đinh Vũ Lâm: 'Anh ơi, cho em xin menu phim hôm nay' để nhận list phim hay nhé! ❤️",
-                choices: [{ text: "Sẽ nhắn ngay! ►", nextState: 'finish', move: POSITIONS.END, save: "Xem phim cùng Lâm" }]
+                text: "🎬 XEM PHIM CÙNG LÂM:\nNhắn ngay cho Đinh Vũ Lâm để nhận list phim hay nhé! ❤️",
+                choices: [
+                    { text: "Sẽ nhắn ngay! ►", nextState: 'finish', move: POSITIONS.END, save: "Xem phim cùng Lâm" },
+                    { text: "⬅️ Quay lại chọn khác", nextState: 'station3', isBack: true }
+                ]
             },
             st3_alone: {
-                text: "🍿 XEM PHIM MỘT MÌNH:\nNếu bí phim, hãy nhắn tin cho Đinh Vũ Lâm để được tư vấn bộ phim chữa lành xịn xò nhé!",
-                choices: [{ text: "Okela! Hoàn thành ►", nextState: 'finish', move: POSITIONS.END, save: "Xem phim 1 mình" }]
+                text: "🍿 XEM PHIM MỘT MÌNH:\nNếu bí phim, hãy nhắn tin cho Đinh Vũ Lâm để được tư vấn bộ phim  xịn xò nhé!",
+                choices: [
+                    { text: "Okela! Hoàn thành ►", nextState: 'finish', move: POSITIONS.END, save: "Xem phim 1 mình" },
+                    { text: "⬅️ Quay lại chọn khác", nextState: 'station3', isBack: true }
+                ]
             }
         };
 
+        // --- HÀM XỬ LÝ LOGIC ---
         function renderState(stateKey) {
             const data = STORY[stateKey];
             contentDiv.innerText = data.text;
             choicesDiv.innerHTML = ''; 
+
             data.choices.forEach(c => {
                 const btn = document.createElement('button');
                 btn.className = 'game-btn';
+                // Nếu là nút back thì thêm class để đổi màu cho dễ nhìn
+                if (c.isBack) btn.classList.add('btn-back');
+                
                 btn.innerText = c.text;
+                
                 btn.onclick = () => {
                     if (c.save) userMenu.push(c.save);
                     if (c.move) {
@@ -277,6 +336,7 @@
                 <b>3. Spirit:</b> ${userMenu[2]}
             `;
         }
+
         renderState('start');
     </script>
 </body>
